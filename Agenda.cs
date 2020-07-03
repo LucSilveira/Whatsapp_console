@@ -1,51 +1,139 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Whatsapp
 {
     public class Agenda : IAgenda
     {
-        public List<Contato> Contatos { get; set; }
+        public List<Contato> ListaContatos { get; set; }
         private const string PATH = "DataBase/AgendaContato.csv";
+        private const string PathBackup = "DataBase/AgendaBackup.csv";
 
 
         /// <summary>
-        /// Método para criação do arquivo e diretório
+        /// Método para criação do arquivo Csv e diretório para armazena-lo
         /// </summary>
         public Agenda()
         {
             // Separando o caminho entre a pasta e o arquivo
             string pasta = PATH.Split('/')[0];
 
+            // Verificando se o Directorio para armazenar nosso arquivo Csv existe
             if(!Directory.Exists(pasta))
             {
                 Directory.CreateDirectory(pasta);
             }
 
+            // Verificando se o nosso arquivo Csv existe
             if(!File.Exists(PATH))
             {
                 File.Create(PATH).Close();
             }
+
+            // Verificando se existe o arquivo de backup
+            if(!File.Exists(PathBackup))
+            {
+                File.Create(PathBackup);
+            }
         }
-
-
-
-
-
-
-        public void ExcluirContato(Contato _contato)
+ 
+        /// <summary>
+        /// Método para inserir linhas com os dados informados pelo usuário
+        /// </summary>
+        /// <param name="ctt">Contato informado</param>
+        /// <returns>Dados capturados pelo contato informado</returns>
+        public string InserirLinhaComDados(Contato _ctt)
         {
-            throw new System.NotImplementedException();
+            return $"Nome={_ctt.Nome};Telefone={_ctt.Telefone}";
         }
 
+        /// <summary>
+        /// Método para separar os parametros com seus dados
+        /// </summary>
+        /// <param name="_dados">Dados passados através das informações das linhas do arquivo</param>
+        /// <returns>Parametros separados pelo caracter '='</returns>
+        public string SepararInformacoes(string _dados)
+        {
+            return _dados.Split('=')[1];
+        }
+
+        public void ExcluirContato(string _contato)
+        {
+            List<string> contatosBackup = new List<string>();
+
+            using(StreamReader arquivoCsv = new StreamReader(PATH))
+            {
+                string linhaDoContato;
+                while((linhaDoContato = arquivoCsv.ReadLine()) != null)
+                {
+                    contatosBackup.Add(linhaDoContato);
+                }
+            }
+
+            contatosBackup.RemoveAll(x => x.Contains(_contato));
+
+            ReescreverCsv(contatosBackup);
+        }
+
+        public void ReescreverCsv(List<string> _backup)
+        {
+            using(StreamWriter armazenamento = new StreamWriter(PATH))
+            {
+                foreach (string linhasBackup in _backup)
+                {
+                    armazenamento.Write(linhasBackup + "\n");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Método para adicionar uma linha no nosso arquivo com
+        /// os dados capturados do contato informado
+        /// </summary>
+        /// <param name="_contato">Dados pertinentes do contato</param>
         public void IncluirContato(Contato _contato)
         {
-            throw new System.NotImplementedException();
+            string[] linhaComDados = new string[]
+            {
+                InserirLinhaComDados(_contato)
+            };
+
+            File.AppendAllLines(PATH, linhaComDados);
         }
 
-        public void ListarContato()
+        /// <summary>
+        /// Método para listas os contatos desejados
+        /// </summary>
+        /// <returns>Lista com os contatos armazenados no csv</returns>
+        public List<Contato> ListarContatos()
         {
-            throw new System.NotImplementedException();
+            ListaContatos = new List<Contato>();
+
+            // Criando um array para guardar as linhas que contém no arquivo .Csv
+            string[] linhasDoArquivo = File.ReadAllLines(PATH);
+
+            foreach (string linhas in linhasDoArquivo)
+            {
+                string[] dadosContato = linhas.Split(';');
+
+                // Criando strings para armazenar os valores capturados da linha do arquivo
+                string _nomeContato = SepararInformacoes(dadosContato[0]);
+                string _telefoneContato = SepararInformacoes(dadosContato[1]);
+
+                // passando os valores das strings para o método construtor
+                Contato ctt = new Contato(_nomeContato, _telefoneContato);
+
+                // Adicionando o contato a lista
+                ListaContatos.Add(ctt);
+            }
+
+            // Fazendo um filtro para listar por ordem dos nomes dos contatos
+            ListaContatos = ListaContatos.OrderBy(x => x.Nome).ToList();
+
+            // retornando a nossa lista de contatos
+            return ListaContatos;
         }
     }
 }
