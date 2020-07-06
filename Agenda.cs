@@ -7,7 +7,7 @@ namespace Whatsapp
 {
     public class Agenda : IAgenda
     {
-        public List<Contato> ListaContatos { get; set; }
+        public List<Contato> ListaDeContatos { get; set; }
         private const string PATH = "DataBase/AgendaContato.csv";
         private const string PathBackup = "DataBase/AgendaBackup.csv";
 
@@ -73,6 +73,8 @@ namespace Whatsapp
             }
 
             contatosBackup.RemoveAll(x => x.Contains(_contato));
+            
+            // foreach mesmo'
 
             ReescreverCsv(contatosBackup);
         }
@@ -103,13 +105,23 @@ namespace Whatsapp
             File.AppendAllLines(PATH, linhaComDados);
         }
 
+        public void InserirBackupContato(Contato _contato)
+        {
+            string[] linhaComDados = new string[]
+            {
+                InserirLinhaComDados(_contato)
+            };
+
+            File.AppendAllLines(PathBackup, linhaComDados);
+        }
+
         /// <summary>
         /// Método para listas os contatos desejados
         /// </summary>
         /// <returns>Lista com os contatos armazenados no csv</returns>
         public List<Contato> ListarContatos()
         {
-            ListaContatos = new List<Contato>();
+            ListaDeContatos = new List<Contato>();
 
             // Criando um array para guardar as linhas que contém no arquivo .Csv
             string[] linhasDoArquivo = File.ReadAllLines(PATH);
@@ -126,14 +138,14 @@ namespace Whatsapp
                 Contato ctt = new Contato(_nomeContato, _telefoneContato);
 
                 // Adicionando o contato a lista
-                ListaContatos.Add(ctt);
+                ListaDeContatos.Add(ctt);
             }
 
             // Fazendo um filtro para listar por ordem dos nomes dos contatos
-            ListaContatos = ListaContatos.OrderBy(x => x.Nome).ToList();
+            ListaDeContatos = ListaDeContatos.OrderBy(x => x.Nome).ToList();
 
             // retornando a nossa lista de contatos
-            return ListaContatos;
+            return ListaDeContatos;
         }
     }
 }
