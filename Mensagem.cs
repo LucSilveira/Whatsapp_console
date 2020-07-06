@@ -4,12 +4,15 @@ namespace Whatsapp
     {
         public string TextoMensagem { get; set; }
 
-        public Contato Destinatario { get; set; }
+        public string Destinatario { get; set; }
 
 
-        // public string EnviarMenagem(Contato _contato)
-        // {
-            
-        // }
+        public void EnviarMenagem(Contato _contato)
+        {
+            Destinatario = _contato.Nome;
+            System.Console.WriteLine($"Destinatario {_contato.Nome}");
+
+            System.Console.WriteLine(TextoMensagem);
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace Whatsapp
     {
         void IncluirContato(Contato _contato);
 
-        void ExcluirContato(string _contato);
+        void ExcluirContato(Contato _contato);
 
         List<Contato> ListarContatos();
     }

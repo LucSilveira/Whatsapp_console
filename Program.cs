@@ -7,13 +7,13 @@ namespace Whatsapp
     {
         static void Main(string[] args)
         {
-            Contato contato = new Contato("a23", "+5511912345678");
+            Contato contato = new Contato("abc", "+5511912345678");
 
             Agenda agenda = new Agenda();
 
             // agenda.IncluirContato(contato);
 
-            agenda.ExcluirContato("Teste");
+            agenda.ExcluirContato(contato);
 
             List<Contato> lista = agenda.ListarContatos();
 
@@ -21,6 +21,11 @@ namespace Whatsapp
             {
                 System.Console.WriteLine($"R$ {ctt.Nome} - {ctt.Telefone}");
             }
+
+
+            Mensagem mgm = new Mensagem();
+            mgm.EnviarMenagem(contato);
+            mgm.TextoMensagem = "Olá " + contato.Nome;
         }
     }
 }

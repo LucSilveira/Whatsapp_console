@@ -59,7 +59,7 @@ namespace Whatsapp
             return _dados.Split('=')[1];
         }
 
-        public void ExcluirContato(string _contato)
+        public void ExcluirContato(Contato _contato)
         {
             List<string> contatosBackup = new List<string>();
 
@@ -72,10 +72,10 @@ namespace Whatsapp
                 }
             }
 
-            contatosBackup.RemoveAll(x => x.Contains(_contato));
-            
-            // foreach mesmo'
+            contatosBackup.RemoveAll(x => x.Contains(_contato.Nome));
 
+            InserirBackupContato(_contato);
+            
             ReescreverCsv(contatosBackup);
         }
 
@@ -130,12 +130,8 @@ namespace Whatsapp
             {
                 string[] dadosContato = linhas.Split(';');
 
-                // Criando strings para armazenar os valores capturados da linha do arquivo
-                string _nomeContato = SepararInformacoes(dadosContato[0]);
-                string _telefoneContato = SepararInformacoes(dadosContato[1]);
-
-                // passando os valores das strings para o método construtor
-                Contato ctt = new Contato(_nomeContato, _telefoneContato);
+                // passando os valores da split para o método construtor
+                Contato ctt = new Contato(SepararInformacoes(dadosContato[0]), SepararInformacoes(dadosContato[1]));
 
                 // Adicionando o contato a lista
                 ListaDeContatos.Add(ctt);
