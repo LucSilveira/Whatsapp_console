@@ -79,6 +79,15 @@ namespace Whatsapp
             ReescreverCsv(contatosBackup);
         }
 
+        public List<Contato> BuscarContato(string _nomeContato)
+        {
+            List<Contato> contatoBuscado;
+
+            contatoBuscado = ListarContatos().FindAll(x => x.Nome == _nomeContato);
+
+            return contatoBuscado;
+        }
+
         public void ReescreverCsv(List<string> _backup)
         {
             using(StreamWriter armazenamento = new StreamWriter(PATH))
@@ -142,6 +151,26 @@ namespace Whatsapp
 
             // retornando a nossa lista de contatos
             return ListaDeContatos;
+        }
+
+        public void AlterarContato(Contato _contatoAlterado)
+        {
+            List<string> linhasTotalArquivo = new List<string>();
+
+            using (StreamReader arquivoCsv = new StreamReader(PATH))
+            {
+                string linhaArquivo;
+                while((linhaArquivo = arquivoCsv.ReadLine()) != null)
+                {
+                    linhasTotalArquivo.Add(linhaArquivo);
+                }
+            }
+
+            linhasTotalArquivo.RemoveAll(x => x.Split(';')[0].Split('=')[1] == _contatoAlterado.Nome);
+
+            linhasTotalArquivo.Add(InserirLinhaComDados(_contatoAlterado));
+
+            ReescreverCsv(linhasTotalArquivo);
         }
     }
 }

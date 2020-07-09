@@ -9,5 +9,7 @@ namespace Whatsapp
         void ExcluirContato(Contato _contato);
 
         List<Contato> ListarContatos();
+
+        void AlterarContato(Contato _contatoAlterado);
     }
 }

@@ -7,12 +7,9 @@ namespace Whatsapp
         public string Destinatario { get; set; }
 
 
-        public void EnviarMenagem(Contato _contato)
+        public string EnviarMenagem(Contato _contato, string _mensagem)
         {
-            Destinatario = _contato.Nome;
-            System.Console.WriteLine($"Destinatario {_contato.Nome}");
-
-            System.Console.WriteLine(TextoMensagem);
+            return $"Enviando mensagem para {_contato.Nome}: \n\t{_mensagem}";
         }
     }
 }
